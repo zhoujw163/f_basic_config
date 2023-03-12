@@ -1,12 +1,24 @@
-import 'package:f_basic_config/http/core/n_net.dart';
+import 'package:f_basic_config/http/core/n_net_error.dart';
 import 'package:f_basic_config/http/request/test_request.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  TestRequest testReq = TestRequest();
-  testReq.add('name', 'jack');
-  var result = NNet.getInstance().fire(testReq);
-  print('result: $result');
+import 'http/core/n_net.dart';
+
+void main() async {
+  TestRequest request = TestRequest();
+  request.add('requestPrams', 'jack');
+  request.addHeader('course-flag', 'fa');
+  try {
+    var result = await NNet.getInstance().fire(request);
+    print('result: $result');
+  } on NeedAuth catch (e) {
+    print(e);
+  } on NeedLogin catch (e) {
+    print(e);
+  } on NNetError catch (e) {
+    print(e);
+  }
+
   runApp(const MyApp());
 }
 

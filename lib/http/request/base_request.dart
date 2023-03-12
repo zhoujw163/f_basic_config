@@ -11,59 +11,58 @@ enum HttpMethod {
   const HttpMethod(this.method);
 }
 
-// 基础请求
+///基础请求
 abstract class BaseRequest {
-  // curl -X GET 'https://api.devio.org/uapi/test/test?name=jack' -H 'accept: */*
-  // curl -X GET 'https://api.devio.org/uapi/test/test/1
-
-  late String pathParams;
-  bool useHttps = true;
+  // curl -X GET "http://api.devio.org/uapi/test/test?requestPrams=11" -H "accept: */*"
+  // curl -X GET "https://api.devio.org/uapi/test/test/1
+  var pathParams;
+  var useHttps = true;
 
   String authority() {
-    return 'api.devio.org';
+    return "api.devio.org";
   }
 
   HttpMethod httpMethod();
+
   String path();
 
-  bool needLogin();
-  bool needAuth();
-
-  // 添加参数
-  Map<String, String> params = {};
-  BaseRequest add(String k, Object v) {
-    params[k] = v.toString();
-    return this;
-  }
-
-  // 添加 header
-  Map<String, String> header = {};
-  BaseRequest addHeader(String k, Object v) {
-    header[k] = v.toString();
-    return this;
-  }
-
-  // 拼接完整的 url
   String url() {
     Uri uri;
-    String pathStr = path();
-    // 拼接 path params
-    if (pathStr.endsWith('/')) {
-      pathStr = '$pathStr$pathParams';
-    } else {
-      pathStr = '$pathStr/$pathParams';
+    var pathStr = path();
+    //拼接path参数
+    if (pathParams != null) {
+      if (path().endsWith("/")) {
+        pathStr = "${path()}$pathParams";
+      } else {
+        pathStr = "${path()}/$pathParams";
+      }
     }
-
-    // http https 切换
+    //http和https切换
     if (useHttps) {
       uri = Uri.https(authority(), pathStr, params);
     } else {
       uri = Uri.http(authority(), pathStr, params);
     }
-
-    // ignore: avoid_print
-    print('url: ${uri.toString()}');
-
+    print('url:${uri.toString()}');
     return uri.toString();
+  }
+
+  bool needLogin();
+
+  Map<String, String> params = {};
+
+  ///添加参数
+  BaseRequest add(String k, Object v) {
+    params[k] = v.toString();
+    return this;
+  }
+
+  bool needAuth();
+  Map<String, dynamic> header = {};
+
+  ///添加header
+  BaseRequest addHeader(String k, Object v) {
+    header[k] = v.toString();
+    return this;
   }
 }
