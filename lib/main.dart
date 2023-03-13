@@ -1,3 +1,4 @@
+import 'package:f_basic_config/db/n_cache.dart';
 import 'package:f_basic_config/http/core/n_net_error.dart';
 import 'package:f_basic_config/http/request/test_request.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +78,12 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    NCache.preInit();
   }
 
   @override
